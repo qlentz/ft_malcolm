@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  attacker:
+    image: alpine
+    container_name: arp_attacker
+    networks:
+      arp_network:
+        ipv4_address: 192.168.0.2
+    command: tail -f /dev/null # Keeps the container running
+    cap_add:
+      - NET_ADMIN # Necessary for network manipulation
+
+  victim:
+    image: alpine
+    container_name: arp_victim
+    networks:
+      arp_network:
+        ipv4_address: 192.168.0.3
+    command: tail -f /dev/null # Keeps the container running
+
+networks:
+  arp_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/16
+
