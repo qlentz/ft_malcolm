@@ -14,7 +14,6 @@
 # define LIBFT_H
 
 # define BUFFER_SIZE 100
-
 # include <unistd.h>
 # include <stdlib.h>
 # include <string.h>

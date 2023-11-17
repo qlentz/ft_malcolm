@@ -1,6 +1,6 @@
 NAME 	= ft_malcolm
 
-SRCS	= src/main.c
+SRCS	= src/mac_addr.c src/arp.c src/main.c
 
 OBJS	= $(SRCS:.c=.o)
 
@@ -8,7 +8,7 @@ LIBFT	= ./libft
 
 CC		= gcc
 
-CFLAGS	= -Wall -Wextra -Werror -I. -I includes/
+CFLAGS	= -Wall -Wextra -Werror -I. -I includes/ -I $(LIBFT)
 
 RM		= rm -f
 
@@ -21,7 +21,7 @@ $(NAME):	$(OBJS)
 			$(CC) $(CFLAGS) -L $(LIBFT) -o $@ $^ -lft
 
 lib:
-			@make -sC $(LIBFT)
+			@make -C $(LIBFT)
 
 env_up:
 			docker compose -f test_env/docker-compose.yml up -d
