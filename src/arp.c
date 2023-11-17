@@ -1,7 +1,7 @@
 #include "ft_malcolm.h"
 
 int	is_arp_request(arp_packet *pack) {
-	if (pack->arp_hdr.opcode == 1)
+	if (ntohs(pack->arp_hdr.opcode) == 1 && ntohs(pack->eth_hdr.eth_type) == ETH_P_ARP)
 		return (SUCCESS);
 	return (ERROR);
 }

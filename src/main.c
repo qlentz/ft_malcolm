@@ -52,15 +52,19 @@ int main(int ac, char **av)
 		dprintf(2, "Error: No network Interface Found\n");
 		exit(1);
 	}
-	
-	//parse arguments; mac pairs of 2 and : sep; valid ip;
+
 	int sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+	if (sockfd == -1) {
+		dprintf(2, "Error: socket()");
+		exit(1);
+	}
+
 	while (true) {
 		recvfrom(sockfd, netbuff, NETBUFFSIZE, 0, NULL, NULL);
 		arp_packet *arp = (arp_packet *)netbuff;
 
-		if (is_arp_request(arp) && is_target_ip(arp, &targets))
-			printf("arp packets received");
+		if (is_arp_request(arp))
+			write(1, "arp packets received\n", strlen("arp packets received\n"));
 	}
 
 	return(0);
