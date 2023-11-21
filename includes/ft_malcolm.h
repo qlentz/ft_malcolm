@@ -29,7 +29,6 @@ typedef struct s_targets {
 	uint32_t	source_ip;
 	uint8_t		target_mac[6];
 	uint8_t		source_mac[6];
-	
 }				t_targets;
 
 int		mac_string_to_bytes(const char *mac_str, uint8_t *mac_bytes);
@@ -37,6 +36,6 @@ void	mac_bytes_to_string(const uint8_t *mac_bytes, char *mac_str);
 int		is_valid_mac_address(const char *mac_str);
 int		mac_equal(uint8_t *m1, uint8_t *m2);
 int		is_arp_request(struct arp_packet *pack);
-int		is_target_ip(struct arp_packet *pack, t_targets *targets);
-
+int		is_arp_target(arp_packet *arp, t_targets *targets);
+void	print_arp_packet(const arp_packet *packet);
 #endif
