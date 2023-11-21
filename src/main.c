@@ -34,7 +34,7 @@ int	parse_user_inputs(char **av, t_targets * targets) {
 }
 
 int is_arp_target(arp_packet *arp, t_targets *targets) {
-	uint32_t sender_ip = ntohl(arp->arp_hdr.sender_ip);
+	uint32_t sender_ip = arp->arp_hdr.sender_ip;
 	if (memcmp(arp->arp_hdr.sender_mac, targets->target_mac, 6) == 0) {
 		printf("sender m = target m ");
 	}
