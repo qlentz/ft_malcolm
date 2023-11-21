@@ -38,4 +38,5 @@ int		is_valid_mac_address(const char *mac_str);
 int		mac_equal(uint8_t *m1, uint8_t *m2);
 int		is_arp_request(struct arp_packet *pack);
 int		is_target_ip(struct arp_packet *pack, t_targets *targets);
+
 #endif

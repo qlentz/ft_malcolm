@@ -33,9 +33,18 @@ int	parse_user_inputs(char **av, t_targets * targets) {
 	return (SUCCESS);
 }
 
+int is_arp_target(arp_packet *arp, t_targets *targets) {
+	uint32_t sender_ip = ntohl(arp->arp_hdr.sender_ip);
+	if (memcmp(arp->arp_hdr.sender_mac, targets->target_mac, 6) == 0)
+		printf("sender m = target m ");
+	if (sender_ip == targets->target_ip) {
+		printf("sender ip = target ip ");
+	}
+	return (0);
+}
+
 int main(int ac, char **av)
 {
-	(void)av;
 	t_sockinfos	sockinfos;
 	unsigned char netbuff[NETBUFFSIZE];
 	t_targets targets;
@@ -64,8 +73,13 @@ int main(int ac, char **av)
 		arp_packet *arp = (arp_packet *)netbuff;
 
 		if (is_arp_request(arp))
-			write(1, "arp packets received\n", strlen("arp packets received\n"));
+			write(1, "rec arp: ", strlen("rec arp: "));
+		if (is_arp_target(arp, &targets)) {
+			continue;
+		}
+		printf("\n");
 	}
+	
 
 	return(0);
 }

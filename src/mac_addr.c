@@ -25,7 +25,7 @@ int is_valid_mac_address(const char *mac_str) {
 
     for (i = 0; i < 6; ++i) {
         if (values[i] < 0 || values[i] > 255) {
-            return 0; // Byte value out of range
+            return ERROR; // Byte value out of range
         }
     }
 
