@@ -7,8 +7,9 @@ int	is_arp_request(arp_packet *pack) {
 }
 
 int is_arp_target(arp_packet *arp, t_targets *targets) {
-	if (memcmp(arp->arp_hdr.sender_mac, targets->target_mac, 6) == 0 && 
-		arp->arp_hdr.sender_ip == targets->target_ip) {
+	if (ft_memcmp(arp->arp_hdr.sender_mac, targets->target_mac, 6) == 0 && 
+		arp->arp_hdr.sender_ip == targets->target_ip &&
+              arp->arp_hdr.target_ip == targets->source_ip) {
 			printf("ARP request received\n");
 			return (1);
 	}
