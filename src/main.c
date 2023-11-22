@@ -11,7 +11,7 @@ int	find_inteface(t_sockinfos *sockinfos) {
     }
 	tofree = ifa;
 	while (ifa->ifa_next != NULL) {
-			if ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING)) && (ifa->ifa_addr->sa_family == AF_INET) && !(ifa->ifa_flags & IFF_LOOPBACK)) {
+			if ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING)) && (ifa->ifa_addr->sa_family == AF_PACKET) && !(ifa->ifa_flags & IFF_LOOPBACK)) {
 				printf("Interface found: %s\n", ifa->ifa_name);
 				sockinfos->interface_name = ft_strdup(ifa->ifa_name);
 				return (SUCCESS);
