@@ -41,3 +41,22 @@ void print_arp_packet(const arp_packet *packet) {
            packet->arp_hdr.target_mac[3], packet->arp_hdr.target_mac[4], packet->arp_hdr.target_mac[5]);
     printf("  Target IP: %s\n", inet_ntoa(*(struct in_addr *)&packet->arp_hdr.target_ip));
 }
+
+void create_arp_reply(arp_packet *reply, const t_targets *tar) {
+    arp_packet
+    memcpy(reply->eth_hdr.dest_mac, tar->target_mac, 6);  // Target MAC
+    memcpy(reply->eth_hdr.src_mac, tar->source_mac, 6);       // My MAC
+    reply->eth_hdr.eth_type = htons(ETH_P_ARP);
+
+    // Set ARP header
+    reply->arp_hdr.hw_type = htons(1);               // Ethernet
+    reply->arp_hdr.proto_type = htons(ETH_P_IP);     // IP
+    reply->arp_hdr.hw_size = 6;                      // MAC size
+    reply->arp_hdr.proto_size = 4;                   // IP size
+    reply->arp_hdr.opcode = htons(2);                // ARP reply
+
+    memcpy(reply->arp_hdr.sender_mac, tar->source_mac, 6);    // My MAC
+    reply->arp_hdr.sender_ip = tar->source_ip;                // My IP
+    memcpy(reply->arp_hdr.target_mac, tar->target_mac, 6);// Target MAC
+    reply->arp_hdr.target_ip = tar->target_ip;            // Target IP
+}

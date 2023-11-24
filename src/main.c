@@ -35,9 +35,10 @@ int	parse_user_inputs(char **av, t_targets * targets) {
 
 int main(int ac, char **av)
 {
-	t_sockinfos	sockinfos;
-	unsigned char netbuff[NETBUFFSIZE];
-	t_targets targets;
+	t_sockinfos		sockinfos;
+	unsigned char	netbuff[NETBUFFSIZE];
+	t_targets		targets;
+	arp_packet		*arp;
 
 	if (ac != 5) {
 		dprintf(2, "Error: Wrong number of arguments\n");
@@ -60,7 +61,7 @@ int main(int ac, char **av)
 
 	while (true) {
 		recvfrom(sockfd, netbuff, NETBUFFSIZE, 0, NULL, NULL);
-		arp_packet *arp = (arp_packet *)netbuff;
+		arp = (arp_packet *)netbuff;
 		if (is_arp_request(arp)) {
 			print_arp_packet(arp);
 		}
@@ -68,6 +69,8 @@ int main(int ac, char **av)
 			break;
 		}
 	}
+	arp_packet reply;
+	create_arp_reply(&reply, &targets);
 	
 
 	return(0);
