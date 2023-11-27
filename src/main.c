@@ -35,6 +35,7 @@ int	find_inteface(t_sockinfos *sockinfos) {
 			if ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING)) && (ifa->ifa_addr->sa_family == AF_PACKET) && !(ifa->ifa_flags & IFF_LOOPBACK)) {
 				printf("Interface found: %s\n", ifa->ifa_name);
 				sockinfos->if_index = get_interface_index(ifa->ifa_name);
+				bind_socket_to_interface(sockinfos, ifa->ifa_name);
 				return (SUCCESS);
 			}
 		ifa = ifa->ifa_next;
