@@ -71,19 +71,22 @@ int main(int ac, char **av)
 		dprintf(2, "Error: Wrong IP(s) or MAC(s)\n");
 		exit(1);
 	}
+
+	sockinfos.sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+	if (sockinfos.sock == -1) {
+		dprintf(2, "Error: socket()\n");
+		exit(1);
+	}
+
 	if (!find_inteface(&sockinfos)) {
 		dprintf(2, "Error: No network Interface Found\n");
 		exit(1);
 	}
 
-	int sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-	if (sockfd == -1) {
-		dprintf(2, "Error: socket()\n");
-		exit(1);
-	}
 	printf("Waiting for ARP request from the target\n");
+	
 	while (true) {
-		recvfrom(sockfd, netbuff, NETBUFFSIZE, 0, NULL, NULL);
+		recvfrom(sockinfos.sock, netbuff, NETBUFFSIZE, 0, NULL, NULL);
 		arp = (arp_packet *)netbuff;
 		if (is_arp_request(arp)) {
 			print_arp_packet(arp);
