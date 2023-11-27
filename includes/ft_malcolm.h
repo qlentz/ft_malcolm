@@ -15,13 +15,14 @@
 #	include <arpa/inet.h>
 #	include <stdbool.h>
 #	include <linux/if_ether.h>
+#	include <linux/if_packet.h>
 # 	define SUCCESS		1
 #	define ERROR		0
 #	define NETBUFFSIZE 1500 //MTU par defaut sur bcp de systems
 
 typedef struct s_sockinfos {
-	char 	*interface_name;
 	int		sock;
+	int		if_index;
 }				t_sockinfos;
 
 typedef struct s_targets {
@@ -38,4 +39,5 @@ int		mac_equal(uint8_t *m1, uint8_t *m2);
 int		is_arp_request(struct arp_packet *pack);
 int		is_arp_target(arp_packet *arp, t_targets *targets);
 void	print_arp_packet(const arp_packet *packet);
+void	create_arp_reply(arp_packet *reply, const t_targets *tar);
 #endif

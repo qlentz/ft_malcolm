@@ -43,7 +43,6 @@ void print_arp_packet(const arp_packet *packet) {
 }
 
 void create_arp_reply(arp_packet *reply, const t_targets *tar) {
-    arp_packet
     memcpy(reply->eth_hdr.dest_mac, tar->target_mac, 6);  // Target MAC
     memcpy(reply->eth_hdr.src_mac, tar->source_mac, 6);       // My MAC
     reply->eth_hdr.eth_type = htons(ETH_P_ARP);
