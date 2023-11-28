@@ -104,9 +104,11 @@ int main(int ac, char **av)
 	memset(&socket_address, 0, sizeof(struct sockaddr_ll));
 
 	// Set the interface index for the socket
+	socket_address.sll_family = AF_PACKET;
 	socket_address.sll_ifindex = sockinfos.if_index;
 	socket_address.sll_halen = ETH_ALEN;
-
+	socket_address.sll_protocol = htons(ETH_P_ARP);
+	memcpy(socket_address.sll_addr, targets.target_mac, ETH_ALEN);
 	// Send the ARP reply
 	if (sendto(sockinfos.sock, &reply, sizeof(reply), 0,
 			(struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0) {
