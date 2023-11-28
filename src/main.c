@@ -116,7 +116,7 @@ int main(int ac, char **av)
 	}
 
 	printf("ARP reply sent.\n");
-
+	print_arp_packet(&reply);
 	// Close the socket and exit
 	close(sockinfos.sock);
 	return(0);
