@@ -1,41 +1,44 @@
-version: '3'
+version: "3"
 
 services:
-  attacker:
-    image: alpine
-    container_name: arp_attacker
-    networks:
-      arp_network:
-        ipv4_address: 192.168.0.2
-    volumes:
-      - ./attacker_entrypoint.sh:/attacker_entrypoint.sh
-    command: /bin/sh /attacker_entrypoint.sh # Keeps the container running
-    cap_add:
-      - NET_ADMIN # Necessary for network manipulation
-    dns:
-      - 8.8.8.8 #dns google psk alpine se fout de ma gueule
+    attacker:
+        image: alpine
+        container_name: arp_attacker
+        mac_address: 02:42:aa:aa:00:02
+        networks:
+            arp_network:
+                ipv4_address: 192.168.0.2
+        volumes:
+            - ./attacker_entrypoint.sh:/attacker_entrypoint.sh
+        command: /bin/sh /attacker_entrypoint.sh # Keeps the container running
+        cap_add:
+            - NET_ADMIN # Necessary for network manipulation
+            - NET_RAW # Needed for raw sockets (ARP)
+        dns:
+            - 8.8.8.8 #dns google psk alpine se fout de ma gueule
 
-  victim:
-    image: alpine
-    container_name: arp_victim
-    networks:
-      arp_network:
-        ipv4_address: 192.168.0.3
-    command: tail -f /dev/null # Keeps the container running
+    victim:
+        image: alpine
+        container_name: arp_victim
+        mac_address: 02:42:aa:aa:00:03
+        networks:
+            arp_network:
+                ipv4_address: 192.168.0.3
+        command: tail -f /dev/null # Keeps the container running
 
-  victim2:
-    image: alpine
-    container_name: arp_victim2
-    networks:
-      arp_network:
-        ipv4_address: 192.168.0.4
-    command: tail -f /dev/null # Keeps the container running
+    victim2:
+        image: alpine
+        container_name: arp_victim2
+        mac_address: 02:42:aa:aa:00:04
+        networks:
+            arp_network:
+                ipv4_address: 192.168.0.4
+        command: tail -f /dev/null # Keeps the container running
 
 networks:
-  arp_network:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.0.0/16
-
+    arp_network:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.0.0/16

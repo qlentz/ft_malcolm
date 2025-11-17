@@ -16,11 +16,15 @@ void mac_bytes_to_string(const uint8_t *mac_bytes, char *mac_str) {
 int is_valid_mac_address(const char *mac_str) {
     int values[6];
     int i;
+    int consumed;
 
-    if (sscanf(mac_str, "%x:%x:%x:%x:%x:%x%*c",
+    if (sscanf(mac_str, "%x:%x:%x:%x:%x:%x%n",
                &values[0], &values[1], &values[2],
-               &values[3], &values[4], &values[5]) != 6) {
+               &values[3], &values[4], &values[5], &consumed) != 6) {
         return ERROR; // Invalid format
+    }
+    if (mac_str[consumed] != '\0') {
+        return ERROR; // Trailing characters
     }
 
     for (i = 0; i < 6; ++i) {
