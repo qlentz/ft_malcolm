@@ -139,11 +139,11 @@ int	bind_socket_to_interface(t_sockinfos *sock, const char *interface)
 	return (SUCCESS);
 }
 
-int iterate_interfaces(t_sockinfos *sockinfos, struct ifaddrs *ifa) {
+int	iterate_interfaces(t_sockinfos *sockinfos, struct ifaddrs *ifa)
+{
 	struct ifaddrs	*cursor;
 	unsigned int	ifindex;
 	int				result;
-
 
 	cursor = ifa;
 	ifindex = 0;
@@ -176,9 +176,7 @@ int iterate_interfaces(t_sockinfos *sockinfos, struct ifaddrs *ifa) {
 int	find_inteface(t_sockinfos *sockinfos)
 {
 	struct ifaddrs	*ifa;
-	struct ifaddrs	*cursor;
 	int				result;
-	unsigned int	ifindex;
 
 	if (getifaddrs(&ifa) == -1)
 	{
@@ -186,29 +184,7 @@ int	find_inteface(t_sockinfos *sockinfos)
 		return (ERROR);
 	}
 	result = ERROR;
-	cursor = ifa;
-	while (cursor)
-	{
-		if ((cursor->ifa_flags & (IFF_UP | IFF_RUNNING))
-			&& !(cursor->ifa_flags & IFF_LOOPBACK) && cursor->ifa_addr
-			&& cursor->ifa_addr->sa_family == AF_PACKET)
-		{
-			ifindex = get_interface_index(cursor->ifa_name);
-			if (ifindex == 0)
-			{
-				cursor = cursor->ifa_next;
-				continue ;
-			}
-			sockinfos->if_index = ifindex;
-			if (bind_socket_to_interface(sockinfos, cursor->ifa_name))
-			{
-				printf("Interface found: %s\n", cursor->ifa_name);
-				result = SUCCESS;
-				break ;
-			}
-		}
-		cursor = cursor->ifa_next;
-	}
+	result = iterate_interfaces(sockinfos, ifa);
 	freeifaddrs(ifa);
 	return (result);
 }
