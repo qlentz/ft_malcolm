@@ -23,7 +23,7 @@ static int	configure_signal(void)
 {
 	struct sigaction	sa;
 
-	memset(&sa, 0, sizeof(sa));
+	ft_memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = handle_sigint;
 	sigemptyset(&sa.sa_mask);
 	if (sigaction(SIGINT, &sa, NULL) == -1)
@@ -44,7 +44,7 @@ static int	process_incoming_packet(unsigned char *netbuff, ssize_t bytes,
 	arp = (arp_packet *)netbuff;
 	if (!is_arp_request(arp))
 		return (ERROR);
-	print_arp_packet(arp);
+//	print_arp_packet(arp);
 	if (is_arp_target(arp, targets))
 		return (SUCCESS);
 	return (ERROR);
@@ -78,12 +78,12 @@ static int	send_arp_reply(t_sockinfos *sockinfos, t_targets *targets)
 	ssize_t				bytes;
 
 	create_arp_reply(&reply, targets);
-	memset(&socket_address, 0, sizeof(struct sockaddr_ll));
+	ft_memset(&socket_address, 0, sizeof(struct sockaddr_ll));
 	socket_address.sll_family = AF_PACKET;
 	socket_address.sll_ifindex = sockinfos->if_index;
 	socket_address.sll_halen = ETH_ALEN;
 	socket_address.sll_protocol = htons(ETH_P_ARP);
-	memcpy(socket_address.sll_addr, targets->target_mac, ETH_ALEN);
+	ft_memcpy(socket_address.sll_addr, targets->target_mac, ETH_ALEN);
 	bytes = sendto(sockinfos->sock, &reply, sizeof(reply), 0,
 			(struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll));
 	if (bytes < 0 || (size_t)bytes != sizeof(reply))
@@ -92,7 +92,7 @@ static int	send_arp_reply(t_sockinfos *sockinfos, t_targets *targets)
 		return (ERROR);
 	}
 	printf("ARP reply sent.\n");
-	print_arp_packet(&reply);
+	//print_arp_packet(&reply);
 	return (SUCCESS);
 }
 
@@ -139,38 +139,32 @@ int	bind_socket_to_interface(t_sockinfos *sock, const char *interface)
 	return (SUCCESS);
 }
 
+static bool	is_candidate_interface(struct ifaddrs *ifa)
+{
+	return ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING))
+		&& !(ifa->ifa_flags & IFF_LOOPBACK) && ifa->ifa_addr
+		&& ifa->ifa_addr->sa_family == AF_PACKET);
+}
+
 int	iterate_interfaces(t_sockinfos *sockinfos, struct ifaddrs *ifa)
 {
 	struct ifaddrs	*cursor;
 	unsigned int	ifindex;
-	int				result;
 
-	cursor = ifa;
-	ifindex = 0;
-	result = ERROR;
-	while (cursor)
+	for (cursor = ifa; cursor; cursor = cursor->ifa_next)
 	{
-		if ((cursor->ifa_flags & (IFF_UP | IFF_RUNNING))
-			&& !(cursor->ifa_flags & IFF_LOOPBACK) && cursor->ifa_addr
-			&& cursor->ifa_addr->sa_family == AF_PACKET)
-		{
-			ifindex = get_interface_index(cursor->ifa_name);
-			if (ifindex == 0)
-			{
-				cursor = cursor->ifa_next;
-				continue ;
-			}
-			sockinfos->if_index = ifindex;
-			if (bind_socket_to_interface(sockinfos, cursor->ifa_name))
-			{
-				printf("Interface found: %s\n", cursor->ifa_name);
-				result = SUCCESS;
-				break ;
-			}
-		}
-		cursor = cursor->ifa_next;
+		if (!is_candidate_interface(cursor))
+			continue ;
+		ifindex = get_interface_index(cursor->ifa_name);
+		if (ifindex == 0)
+			continue ;
+		sockinfos->if_index = ifindex;
+		if (bind_socket_to_interface(sockinfos, cursor->ifa_name) != SUCCESS)
+			continue ;
+		printf("Interface found: %s\n", cursor->ifa_name);
+		return (SUCCESS);
 	}
-	return (result);
+	return (ERROR);
 }
 
 int	find_inteface(t_sockinfos *sockinfos)

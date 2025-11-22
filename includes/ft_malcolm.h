@@ -21,7 +21,7 @@
 # include "libft.h"
 
 # define SUCCESS				1
-# define ERROR					-1
+# define ERROR					0
 # define NETBUFFSIZE			1500
 
 typedef struct s_sockinfos {
