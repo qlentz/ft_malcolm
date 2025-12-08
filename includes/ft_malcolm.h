@@ -44,9 +44,11 @@ int				is_arp_request(struct arp_packet *pack);
 int				is_arp_target(arp_packet *arp, t_targets *targets);
 void			print_arp_packet(const arp_packet *packet);
 void			create_arp_reply(arp_packet *reply, const t_targets *tar);
-unsigned int	get_interface_index(const char *interface_name);
-int				bind_socket_to_interface(t_sockinfos *sock, const char *interface);
+//unsigned int	get_interface_index(const char *interface_name);
+//int				bind_socket_to_interface(t_sockinfos *sock, const char *interface);
 int				find_inteface(t_sockinfos *sockinfos);
 int				parse_user_inputs(char **av, t_targets *targets);
+int				send_arp_reply(t_sockinfos *sockinfos, t_targets *targets);
+int				process_incoming_packet(unsigned char *netbuff, ssize_t bytes, t_targets *targets);
 
 #endif

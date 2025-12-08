@@ -35,3 +35,28 @@ void	create_arp_reply(arp_packet *reply, const t_targets *tar)
 	memcpy(reply->arp_hdr.target_mac, tar->target_mac, 6);
 	reply->arp_hdr.target_ip = tar->target_ip;
 }
+
+int	send_arp_reply(t_sockinfos *sockinfos, t_targets *targets)
+{
+	arp_packet			reply;
+	struct sockaddr_ll	socket_address;
+	ssize_t				bytes;
+
+	create_arp_reply(&reply, targets);
+	ft_memset(&socket_address, 0, sizeof(struct sockaddr_ll));
+	socket_address.sll_family = AF_PACKET;
+	socket_address.sll_ifindex = sockinfos->if_index;
+	socket_address.sll_halen = ETH_ALEN;
+	socket_address.sll_protocol = htons(ETH_P_ARP);
+	ft_memcpy(socket_address.sll_addr, targets->target_mac, ETH_ALEN);
+	bytes = sendto(sockinfos->sock, &reply, sizeof(reply), 0,
+			(struct sockaddr *)&socket_address, sizeof(struct sockaddr_ll));
+	if (bytes < 0 || (size_t)bytes != sizeof(reply))
+	{
+		perror("sendto failed");
+		return (ERROR);
+	}
+	printf("ARP reply sent.\n");
+	//print_arp_packet(&reply);
+	return (SUCCESS);
+}

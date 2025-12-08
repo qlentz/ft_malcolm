@@ -1,6 +1,6 @@
 NAME 	= ft_malcolm
 
-SRCS	= src/mac_addr.c src/arp.c src/main.c
+SRCS	= src/mac_addr.c src/arp.c src/main.c src/interface.c
 
 OBJS	= $(SRCS:.c=.o)
 
@@ -29,7 +29,7 @@ env_up:
 env_down:
 			docker compose -f test_env/docker-compose.yml down
 
-clean:		
+clean:
 			$(RM) $(OBJS)
 			@make -C $(LIBFT) clean
 
