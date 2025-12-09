@@ -4,8 +4,8 @@
 # include <arpa/inet.h>
 # include <errno.h>
 # include <ifaddrs.h>
-# include <linux/if_ether.h>
-# include <linux/if_packet.h>
+# include <netinet/if_ether.h>
+# include <netinet/if_packet.h>
 # include <net/if.h>
 # include <signal.h>
 # include <stdbool.h>
