@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helpers.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qlentz <marvin@42lausanne.ch>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/21 17:02:08 by qlentz            #+#    #+#             */
+/*   Updated: 2026/10/21 17:02:08 by qlentz           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_malcolm.h>
 
-void	print_arp_packet(const arp_packet *packet)
+void	print_arp_packet(const t_arp_packet *packet)
 {
 	char	sender_ip[INET_ADDRSTRLEN];
 	char	target_ip[INET_ADDRSTRLEN];

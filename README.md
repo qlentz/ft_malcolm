@@ -32,6 +32,7 @@ library. `make re` rebuilds both projects; `make fclean` removes build artifacts
 ## Checks
 
 ```sh
+norminette src includes
 make check
 python3 tests/check_interfaces.py --valgrind
 make check_kernel
@@ -65,3 +66,8 @@ libft submodule. `make env_up` rebuilds those images. Dependency installation an
 compilation failures stop the image build; startup also exits if `make` fails.
 The attacker image's working directory is `/opt/ft_malcolm`. Both images include
 `ip`, `ping`, `arping`, and `tcpdump` for inspecting their owned test network.
+
+See [test_env/DEMO.md](test_env/DEMO.md) for the tested evaluation walkthrough.
+On this host use `sudo make env_up`, then
+`python3 tests/check_docker.py --sudo` for automated Docker verification.
+Use `sudo make env_down` to remove the demo containers and network afterward.

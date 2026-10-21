@@ -19,21 +19,25 @@ make          # Build ft_malcolm (also builds libft)
 make re       # Full rebuild
 make clean    # Remove object files
 make fclean   # Remove object files and binaries
+norminette src includes # Check all project C sources and headers
 make check    # Mandatory parsing, runtime, and build regressions
 make check_kernel # Live exchange in isolated attacker/target network namespaces
 ```
 
 ## Test Environment
 
-Testing requires Docker to simulate a two-host network:
+The Docker Compose demo simulates a two-host network:
 
 ```bash
 make env_up   # Start attacker (192.168.0.2) and victim (192.168.0.3) containers
 make env_down # Stop and remove containers
+python3 tests/check_docker.py --sudo # Verify the running demo on this host
 ```
 
 The Compose lab builds local sources using `test_env/Dockerfile`; the attacker
 entrypoint exits if compilation fails. `make env_up` rebuilds the images.
+This account needs `sudo make env_up` and `sudo make env_down` for Docker access.
+The tested manual evaluation walkthrough is in `test_env/DEMO.md`.
 Run `make check` for mandatory regressions and
 `python3 tests/check_interfaces.py --valgrind` for memory checks on mocked flows.
 `make check_kernel` checks real sockets between independent attacker/target
@@ -57,13 +61,14 @@ VM/kernel information and recorded results.
 ### Key Structures (includes/)
 
 - `ft_malcolm.h`: `s_sockinfos` (raw socket + interface index) and `s_targets` (parsed source/target IPs and MACs)
-- `arp.h`: `eth_header` and `arp_header` with `__attribute__((packed))` — these map directly onto wire bytes
+- `arp.h`: `t_eth_header`, `t_arp_header`, and `t_arp_packet` use `__attribute__((packed))` to map directly onto wire bytes
 
 ### Source Modules (src/)
 
 | File | Purpose |
 |------|---------|
-| `main.c` | Entry point, SIGINT handler, socket setup, main recv loop |
+| `main.c` | Entry point, SIGINT handler, and main recv loop |
+| `setup.c` | Socket setup, input parsing, error output, and socket cleanup |
 | `arp.c` | Broadcast/header validation and target matching |
 | `reply.c` | Construct and send the reply; report failed and short sends separately |
 | `mac_addr.c` | MAC string↔bytes conversion and validation |
@@ -83,3 +88,8 @@ Run `norminette libft` and `python3 libft/tests/check.py --valgrind` for its che
 ## Code Style Notes
 
 This project follows 42 School norm conventions. Recent commits are labeled "norm" or "norm fixes" — these are style compliance commits. The function name `find_inteface` (missing an 'r') is intentional/consistent throughout the codebase — do not rename it.
+
+All eight project C sources and both headers pass `norminette src includes`.
+The command exits 0 without notices. A private accessor in `main.c` owns the
+single function-local static `volatile sig_atomic_t` flag used by the signal
+handler and receive loop; there are no file-scope global variables.

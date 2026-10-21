@@ -25,9 +25,9 @@ static int	is_valid_packet_source(const struct sockaddr_ll *source,
 int	process_incoming_packet(unsigned char *netbuff, ssize_t bytes,
 		t_targets *targets)
 {
-	arp_packet	arp;
+	t_arp_packet	arp;
 
-	if (!netbuff || bytes < 0 || (size_t)bytes < sizeof(arp_packet))
+	if (!netbuff || bytes < 0 || (size_t)bytes < sizeof(t_arp_packet))
 		return (ERROR);
 	ft_memcpy(&arp, netbuff, sizeof(arp));
 	if (!is_arp_request(&arp))

@@ -12,7 +12,7 @@
 
 #include "ft_malcolm.h"
 
-void	create_arp_reply(arp_packet *reply, const t_targets *tar)
+void	create_arp_reply(t_arp_packet *reply, const t_targets *tar)
 {
 	ft_memcpy(reply->eth_hdr.dest_mac, tar->target_mac, 6);
 	ft_memcpy(reply->eth_hdr.src_mac, tar->source_mac, 6);
@@ -46,7 +46,7 @@ static int	check_send_result(ssize_t bytes, size_t expected)
 
 int	send_arp_reply(t_sockinfos *sockinfos, t_targets *targets)
 {
-	arp_packet			reply;
+	t_arp_packet		reply;
 	struct sockaddr_ll	socket_address;
 	ssize_t				bytes;
 

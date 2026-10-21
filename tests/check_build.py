@@ -62,7 +62,7 @@ def main():
                    for path in (stage / "src").glob("*.o")}
         library = {str(path.relative_to(stage))
                    for path in (stage / "libft").glob("*.o")}
-        assert "src/reply.o" in project and len(project) == 6
+        assert {"src/reply.o", "src/setup.o"} <= project and len(project) == 7
         assert len(list(stage.rglob("*.d"))) == len(project) + len(library)
         no_op()
         run("-j8", "re")

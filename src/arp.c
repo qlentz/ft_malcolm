@@ -26,7 +26,7 @@ static int	is_broadcast_mac(const uint8_t *mac)
 	return (SUCCESS);
 }
 
-int	is_arp_request(arp_packet *pack)
+int	is_arp_request(t_arp_packet *pack)
 {
 	return (pack && ntohs(pack->eth_hdr.eth_type) == ETH_P_ARP
 		&& is_broadcast_mac(pack->eth_hdr.dest_mac)
@@ -39,7 +39,7 @@ int	is_arp_request(arp_packet *pack)
 			ETH_ALEN) == 0);
 }
 
-int	is_arp_target(arp_packet *arp, t_targets *targets)
+int	is_arp_target(t_arp_packet *arp, t_targets *targets)
 {
 	if (ft_memcmp(arp->arp_hdr.sender_mac, targets->target_mac, 6) == 0
 		&& arp->arp_hdr.sender_ip == targets->target_ip

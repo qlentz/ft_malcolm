@@ -74,10 +74,11 @@ The review describes the original checkout; this checklist tracks the current wo
 - [x] Verify Ctrl+C on a real packet socket, no reply on interruption, and continued
   waiting after an idle receive timeout.
 - [x] Verify multiple-adapter selection and interface/error cleanup.
-- [x] Include all evaluated source, tests, documentation, and submodule references
-  in the final Git revision, and verify a fresh checkout with automatic recursive
-  submodule initialization. The local
-  `compile_commands.json` and generated build files are ignored and preserved.
+- [x] Include the Norm and Docker-demo follow-ups in the submitted Git history,
+  including `src/setup.c`, `tests/check_docker.py`, and `test_env/DEMO.md`.
+  A fresh clone with the final-source changes overlaid passed automatic submodule
+  initialization, a parallel rebuild, Norminette, and `make check`.
+  Generated files remain ignored.
 
 ## Addressed libft defects from the review
 
@@ -103,16 +104,26 @@ This project's `libft/` now points to that revision as a Git submodule.
 The subject does not explicitly require Norm compliance. Bonuses are evaluated
 only after all mandatory requirements pass.
 
-- [ ] Address the reported Norminette errors if keeping the repository's stated
-  42 style: headers, formatting, the `for` loop, ternary expression, and excessive
-  functions per file. The library's reported style errors are fixed; project
-  C/header style work remains.
+- [x] Address all reported project Norminette errors: add valid headers, fix
+  guards/type names/formatting, remove the ternary expression, and move socket,
+  input, and cleanup helpers to `src/setup.c` to meet the function limit.
+  All eight project C sources and both headers pass with exit status 0 and no
+  notices. The signal flag is a function-local static `volatile sig_atomic_t`
+  accessed through a private helper; the interface-error helper moved to setup
+  to keep both files within the function limit.
 - [ ] If implementing verbose mode, finish `print_arp_packet`, add its source to
   the build, and enable its call sites only when requested by that mode. It
   currently converts addresses without printing them.
 - [ ] Decide whether to use or remove the unused MAC formatting/equality helpers.
 - [ ] Optional bonus: hostname resolution for IPv4 addresses.
 - [ ] Optional bonus: alternate decimal IPv4 input.
+- [ ] Optional library portability: `ft_printf("%p", NULL)` prints `(nil)`;
+  Alpine/musl printf prints `0`. The production program does not use this
+  formatter. The library suite passes on the GNU libc host, but this comparison
+  fails under musl. No libft change was made in this project follow-up.
+- [ ] Optional diagnostic follow-up: standalone library ASan checks remain
+  inconclusive in the Debian container. Full library Valgrind checks pass, and
+  all 58 project runtime scenarios pass ASan/UBSan in Alpine.
 
 ## Verification already completed
 
@@ -147,12 +158,15 @@ only after all mandatory requirements pass.
 - [x] Valgrind: all 58 mocked scenarios pass without memory errors or leaks.
 - [x] Live kernel test: invalid frames, one correct reply, independent target
   ARP cache, idle timeout, and Ctrl+C all pass.
-- [x] GCC analyzer passes all project C sources. The rewritten request, reply,
-  receive, and interface modules pass Norminette.
-- [ ] Optional: run the Compose lab with Docker on the intended host; Docker's
-  CLI is unavailable here. The attacker image builds successfully with Podman
-  against Alpine/musl; real container startup, tool availability, CLI errors,
-  and build-failure handling passed. Compose YAML/build contexts were checked.
+- [x] GCC analyzer passes all eight current project C sources. All 68 project
+  and library C/header files pass Norminette; parallel rebuilds and the full
+  `make check` suite pass after the Norm follow-up.
+- [x] All 58 project runtime scenarios pass ASan/UBSan in a disposable Alpine
+  container with the linked library objects instrumented.
+- [x] Docker Compose builds, starts, and stops the demo successfully. Real tests
+  verify local-source hashes, network tools, CLI/permission/startup errors, an
+  exact single reply, the victim's ARP cache, idle waiting, and SIGINT. Actual
+  interactive Ctrl+C also exits 0. See `test_env/DEMO.md` for evaluation commands.
 
-Full-project Norm work and bonuses above remain optional under subject v2.2.
+Full-project Norm work is complete; bonuses above remain optional under subject v2.2.
 See [test_env/VERIFICATION.md](test_env/VERIFICATION.md) for commands and evidence.

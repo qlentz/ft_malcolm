@@ -126,7 +126,7 @@ int __wrap_sigaction(int number, const struct sigaction *action,
     return __real_sigaction(number, action, old);
 }
 
-static void make_request(arp_packet *packet)
+static void make_request(t_arp_packet *packet)
 {
     const unsigned char mac[6] = {2, 0, 0, 0, 0, 2};
     memset(packet, 0, sizeof(*packet));
@@ -146,7 +146,7 @@ static void make_request(arp_packet *packet)
 ssize_t __wrap_recvfrom(int fd, void *buffer, size_t length, int flags,
                        struct sockaddr *addr, socklen_t *addrlen)
 {
-    arp_packet packet;
+    t_arp_packet packet;
     struct sockaddr_ll source;
     assert(fd == channels[0] && flags == 0);
     assert(addr && addrlen && *addrlen == sizeof(source));
@@ -219,7 +219,7 @@ ssize_t __wrap_recvfrom(int fd, void *buffer, size_t length, int flags,
 ssize_t __wrap_sendto(int fd, const void *buffer, size_t length, int flags,
                      const struct sockaddr *addr, socklen_t addrlen)
 {
-    const arp_packet *packet = buffer;
+    const t_arp_packet *packet = buffer;
     const struct sockaddr_ll *link = (const struct sockaddr_ll *)addr;
     const unsigned char source_mac[6] = {2, 0, 0, 0, 0, 1};
     const unsigned char target_mac[6] = {2, 0, 0, 0, 0, 2};
@@ -278,7 +278,8 @@ def compile_program(root, stage, mocked):
         f"-I{root / 'includes'}", f"-I{root / 'libft'}",
     ]
     command += [str(root / "src" / f"{name}.c")
-                for name in ("main", "arp", "net", "interface", "mac_addr", "reply")]
+                for name in ("main", "arp", "net", "interface", "mac_addr",
+                             "reply", "setup")]
     if mocked:
         wrapper = stage / "wrappers.c"
         wrapper.write_text(WRAPPERS)

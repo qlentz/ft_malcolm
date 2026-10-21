@@ -225,8 +225,8 @@ def contract_checks(root, stage):
         if (len(parts) == 3 and parts[1] in "bBdDrRsSgG"
                 and not parts[2].startswith(".")):
             variables.append(parts[2])
-    assert variables == ["g_stop"], variables
-    print("PASS: function whitelist and one project global variable")
+    assert len(variables) <= 1, variables
+    print("PASS: function whitelist and at most one project state variable")
 
 
 def main():

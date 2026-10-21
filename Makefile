@@ -1,6 +1,7 @@
 NAME 	= ft_malcolm
 
-SRCS	= src/mac_addr.c src/arp.c src/main.c src/interface.c src/net.c src/reply.c
+SRCS	= src/mac_addr.c src/arp.c src/main.c src/interface.c src/net.c \
+		  src/reply.c src/setup.c
 
 OBJS	= $(SRCS:.c=.o)
 

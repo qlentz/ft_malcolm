@@ -1,32 +1,44 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   arp.h                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qlentz <marvin@42lausanne.ch>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/21 17:02:08 by qlentz            #+#    #+#             */
+/*   Updated: 2026/10/21 17:02:08 by qlentz           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef ARP_H
-#define ARP_H
+# define ARP_H
 
-	#include <stdint.h>
+# include <stdint.h>
 
-	// Ethernet header
-	typedef struct eth_header {
-		uint8_t  dest_mac[6];  // 	Dest MAC address
-		uint8_t  src_mac[6];   // 	Src MAC address
-		uint16_t eth_type;     // 	Ethernet Type
-	} __attribute__((packed)) eth_header; // 	Pour que le compilo ajoute pas de padding
+typedef struct s_eth_header
+{
+	uint8_t		dest_mac[6];
+	uint8_t		src_mac[6];
+	uint16_t	eth_type;
+} __attribute__((packed))	t_eth_header;
 
-	// ARP header
-	typedef struct arp_header {
-		uint16_t hw_type;      	// 	Hardware Type
-		uint16_t proto_type;   	// 	Protocol Type
-		uint8_t  hw_size;      	// 	Hardware Size
-		uint8_t  proto_size;   	// 	Protocol Size
-		uint16_t opcode;       	// 	ARP Opcode
-		uint8_t  sender_mac[6];	// 	Sender's MAC address
-		uint32_t sender_ip;    	// 	Sender's IP address
-		uint8_t  target_mac[6]; // 	Target's MAC address
-		uint32_t target_ip;    	// 	Target's IP address
-	} __attribute__((packed)) arp_header;
+typedef struct s_arp_header
+{
+	uint16_t	hw_type;
+	uint16_t	proto_type;
+	uint8_t		hw_size;
+	uint8_t		proto_size;
+	uint16_t	opcode;
+	uint8_t		sender_mac[6];
+	uint32_t	sender_ip;
+	uint8_t		target_mac[6];
+	uint32_t	target_ip;
+} __attribute__((packed))	t_arp_header;
 
-	// ARP packet
-	typedef struct arp_packet {
-		struct eth_header eth_hdr; // Ethernet Header
-		struct arp_header arp_hdr; // ARP Header
-	} __attribute__((packed)) arp_packet;
+typedef struct s_arp_packet
+{
+	t_eth_header	eth_hdr;
+	t_arp_header	arp_hdr;
+} __attribute__((packed))	t_arp_packet;
 
 #endif
