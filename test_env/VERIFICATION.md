@@ -1,6 +1,6 @@
 # Project verification
 
-Recorded on 2026-10-21. The current checklist is [TODO.md](../TODO.md).
+Recorded on 2026-10-21. The evaluation walkthrough is [DEMO.md](DEMO.md).
 
 The mandatory implementation and Docker evaluation demo pass the checks below.
 The Norm and demo follow-ups and their reproducible checks are included in this
