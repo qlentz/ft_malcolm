@@ -1,7 +1,7 @@
 # ft_malcolm
 
-An IPv4 ARP exercise written in C. See [subject.md](subject.md) for the requirements
-and [TODO.md](TODO.md) for the current review follow-up.
+An IPv4 ARP exercise written in C. See [TODO.md](TODO.md) for the current project
+status and [test_env/DEMO.md](test_env/DEMO.md) for the evaluation walkthrough.
 
 ## Build
 

@@ -1,7 +1,7 @@
 # ft_malcolm TODO
 
-Updated 2026-10-21 after the follow-up fixes to [review.md](review.md).
-The review describes the original checkout; this checklist tracks the current work.
+Updated 2026-10-21 after final verification. This checklist tracks project
+readiness and the remaining optional work.
 
 ## Addressed review findings
 
