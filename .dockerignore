@@ -1,0 +1,9 @@
+.git
+**/.git
+.cache
+**/__pycache__
+**/*.o
+**/*.d
+**/*.a
+ft_malcolm
+compile_commands.json

@@ -8,13 +8,11 @@ void	print_arp_packet(const arp_packet *packet)
 	if (!inet_ntop(AF_INET, &packet->arp_hdr.sender_ip, sender_ip,
 			sizeof(sender_ip)))
 	{
-		strncpy(sender_ip, "invalid", sizeof(sender_ip));
-		sender_ip[sizeof(sender_ip) - 1] = '\0';
+		ft_strlcpy(sender_ip, "invalid", sizeof(sender_ip));
 	}
 	if (!inet_ntop(AF_INET, &packet->arp_hdr.target_ip, target_ip,
 			sizeof(target_ip)))
 	{
-		strncpy(target_ip, "invalid", sizeof(target_ip));
-		target_ip[sizeof(target_ip) - 1] = '\0';
+		ft_strlcpy(target_ip, "invalid", sizeof(target_ip));
 	}
 }

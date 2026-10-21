@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   interface.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qlentz <marvin@42lausanne.ch>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/21 12:04:16 by qlentz            #+#    #+#             */
+/*   Updated: 2026/10/21 17:02:08 by qlentz           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <ft_malcolm.h>
 
 static unsigned int	get_interface_index(const char *interface_name)
@@ -6,65 +18,60 @@ static unsigned int	get_interface_index(const char *interface_name)
 
 	ifindex = if_nametoindex(interface_name);
 	if (ifindex == 0)
-		perror("if_nametoindex");
+		dprintf(2, "if_nametoindex: %s\n", strerror(errno));
 	return (ifindex);
 }
 
 static bool	is_candidate_interface(struct ifaddrs *ifa)
 {
-	return ((ifa->ifa_flags & (IFF_UP | IFF_RUNNING))
-		&& !(ifa->ifa_flags & IFF_LOOPBACK) && ifa->ifa_addr
-		&& ifa->ifa_addr->sa_family == AF_PACKET);
+	const struct sockaddr_ll	*address;
+
+	if (!ifa->ifa_name || !ifa->ifa_addr
+		|| ifa->ifa_addr->sa_family != AF_PACKET
+		|| (ifa->ifa_flags & (IFF_UP | IFF_RUNNING)) != (IFF_UP | IFF_RUNNING)
+		|| (ifa->ifa_flags & IFF_LOOPBACK))
+		return (false);
+	address = (const struct sockaddr_ll *)ifa->ifa_addr;
+	return (address->sll_hatype == ARPHRD_ETHER
+		&& address->sll_halen == ETH_ALEN);
 }
 
-static int	bind_socket_to_interface(t_sockinfos *sock, const char *interface)
+static int	iterate_interfaces(t_sockinfos *sockinfos, struct ifaddrs *ifa,
+		int wanted_index)
 {
-	struct ifreq	ifr;
-
-	memset(&ifr, 0, sizeof(ifr));
-	strncpy(ifr.ifr_name, interface, IFNAMSIZ - 1);
-	if (setsockopt(sock->sock, SOL_SOCKET, SO_BINDTODEVICE, &ifr,
-			sizeof(ifr)) < 0)
-	{
-		perror("setsockopt SO_BINDTODEVICE");
-		return (ERROR);
-	}
-	return (SUCCESS);
-}
-
-static int	iterate_interfaces(t_sockinfos *sockinfos, struct ifaddrs *ifa)
-{
-	struct ifaddrs	*cursor;
 	unsigned int	ifindex;
 
-	for (cursor = ifa; cursor; cursor = cursor->ifa_next)
+	while (ifa)
 	{
-		if (!is_candidate_interface(cursor))
-			continue ;
-		ifindex = get_interface_index(cursor->ifa_name);
-		if (ifindex == 0)
-			continue ;
-		sockinfos->if_index = ifindex;
-		if (bind_socket_to_interface(sockinfos, cursor->ifa_name) != SUCCESS)
-			continue ;
-		printf("Interface found: %s\n", cursor->ifa_name);
-		return (SUCCESS);
+		if (is_candidate_interface(ifa))
+		{
+			ifindex = get_interface_index(ifa->ifa_name);
+			if (ifindex && (!wanted_index || ifindex == (unsigned)wanted_index))
+			{
+				if (wanted_index)
+				{
+					sockinfos->if_index = ifindex;
+					printf("Interface selected: %s\n", ifa->ifa_name);
+				}
+				return (SUCCESS);
+			}
+		}
+		ifa = ifa->ifa_next;
 	}
 	return (ERROR);
 }
 
-int	find_inteface(t_sockinfos *sockinfos)
+int	find_inteface(t_sockinfos *sockinfos, int if_index)
 {
 	struct ifaddrs	*ifa;
 	int				result;
 
 	if (getifaddrs(&ifa) == -1)
 	{
-		perror("getifaddrs");
-		return (ERROR);
+		dprintf(2, "getifaddrs: %s\n", strerror(errno));
+		return (-1);
 	}
-	result = ERROR;
-	result = iterate_interfaces(sockinfos, ifa);
+	result = iterate_interfaces(sockinfos, ifa, if_index);
 	freeifaddrs(ifa);
 	return (result);
 }

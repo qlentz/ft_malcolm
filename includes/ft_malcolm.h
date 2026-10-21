@@ -5,16 +5,18 @@
 # include <errno.h>
 # include <ifaddrs.h>
 # include <netinet/if_ether.h>
-# include <netinet/if_packet.h>
+# include <linux/if_packet.h>
 # include <net/if.h>
+# include <net/if_arp.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <stdint.h>
+# include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <sys/ioctl.h>
 # include <sys/socket.h>
+# include <sys/time.h>
 # include <unistd.h>
 
 # include "arp.h"
@@ -44,9 +46,11 @@ int				is_arp_request(struct arp_packet *pack);
 int				is_arp_target(arp_packet *arp, t_targets *targets);
 void			print_arp_packet(const arp_packet *packet);
 void			create_arp_reply(arp_packet *reply, const t_targets *tar);
-//unsigned int	get_interface_index(const char *interface_name);
-//int				bind_socket_to_interface(t_sockinfos *sock, const char *interface);
-int				find_inteface(t_sockinfos *sockinfos);
+/* Index 0 checks availability; a positive index selects the receiving adapter.
+ * Result: 1 = usable, 0 = no match, -1 = enumeration error.
+ */
+int				find_inteface(t_sockinfos *sockinfos, int if_index);
+int				receive_target_packet(t_sockinfos *sockinfos, t_targets *targets);
 int				parse_user_inputs(char **av, t_targets *targets);
 int				send_arp_reply(t_sockinfos *sockinfos, t_targets *targets);
 int				process_incoming_packet(unsigned char *netbuff, ssize_t bytes, t_targets *targets);

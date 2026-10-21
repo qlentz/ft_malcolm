@@ -2,6 +2,8 @@
 
 Reviewed on 2026-10-21 against subject version 2.2, transcribed in [subject.md](subject.md).
 
+Follow-up status and remaining work are tracked in [TODO.md](TODO.md). The findings below describe the original review snapshot.
+
 **Assessment: the main algorithm is implemented, but the checkout is not ready for mandatory evaluation.** The submitted build fails, several mandatory calls are outside the function whitelist, and incoming-packet validation is incomplete. After bypassing the build problems in a temporary copy, the normal control flow behaves as intended in a mocked-network test.
 
 All six project C files, both project headers, all 57 libft C files and its header, both Makefiles, and the Docker test configuration were read. No implementation files were changed during this review. Diagnostic builds and test harnesses were kept under `/tmp`.

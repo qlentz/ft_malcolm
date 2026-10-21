@@ -1,10 +1,34 @@
 #include "ft_malcolm.h"
 
+static int	hex_value(unsigned char c)
+{
+	if (ft_isdigit(c))
+		return (c - '0');
+	c = ft_tolower(c);
+	if (c >= 'a' && c <= 'f')
+		return (c - 'a' + 10);
+	return (-1);
+}
+
 int	mac_string_to_bytes(const char *mac_str, uint8_t *mac_bytes)
 {
-	return (sscanf(mac_str, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &mac_bytes[0],
-			&mac_bytes[1], &mac_bytes[2], &mac_bytes[3], &mac_bytes[4],
-			&mac_bytes[5]) == 6);
+	int	i;
+	int	high;
+	int	low;
+
+	if (!mac_str || !mac_bytes || ft_strlen(mac_str) != 17)
+		return (ERROR);
+	i = 0;
+	while (i < 6)
+	{
+		high = hex_value(mac_str[i * 3]);
+		low = hex_value(mac_str[i * 3 + 1]);
+		if (high < 0 || low < 0 || (i < 5 && mac_str[i * 3 + 2] != ':'))
+			return (ERROR);
+		mac_bytes[i] = high * 16 + low;
+		i++;
+	}
+	return (SUCCESS);
 }
 
 void	mac_bytes_to_string(const uint8_t *mac_bytes, char *mac_str)
@@ -15,29 +39,9 @@ void	mac_bytes_to_string(const uint8_t *mac_bytes, char *mac_str)
 
 int	is_valid_mac_address(const char *mac_str)
 {
-	int	values[6];
-	int	i;
-	int	consumed;
+	uint8_t	mac_bytes[6];
 
-	i = 0;
-	if (sscanf(mac_str, "%x:%x:%x:%x:%x:%x%n", &values[0], &values[1],
-			&values[2], &values[3], &values[4], &values[5], &consumed) != 6)
-	{
-		return (ERROR);
-	}
-	if (mac_str[consumed] != '\0')
-	{
-		return (ERROR);
-	}
-	while (i < 6)
-	{
-		if (values[i] < 0 || values[i] > 255)
-		{
-			return (ERROR);
-		}
-		i++;
-	}
-	return (SUCCESS);
+	return (mac_string_to_bytes(mac_str, mac_bytes));
 }
 
 int	mac_equal(uint8_t *m1, uint8_t *m2)
